@@ -19,37 +19,10 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
-target-version = "py311"
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-    "*/migrations/*.py",
-    "staticfiles/*",
-    "docs/",
-]
+target-version = "py37"
 line-length = 120
 fix = true
-
-[tool.ruff.lint]
+exclude = ['docs/']
 select = [
     # flake8-2020
     "YTT",
@@ -87,27 +60,14 @@ ignore = [
     "E501",
     # DoNotAssignLambda
     "E731",
-    # ClassAttributesShouldBeAnnotated
-    "RUF012",
-    "TRY003",
+]
 
-    "A003",
-    "F403",
-    "F405",
-    "C901",
-]
-exclude = [
-]
-[tool.ruff.lint.per-file-ignores]
-"**/tests/*" = ["S101","S105"]
+[tool.ruff.per-file-ignores]
+"tests/*" = ["S101","S105"]
+"**/management/commands/*.py" = ["A003"]
+# "**/models.py" = ["A003",]
+# "docs/conf.py" = ["*"]
 
-[tool.ruff.format]
-docstring-code-format = true
-docstring-code-line-length = 88
-line-ending = "lf"
-exclude = [
-    "*/migrations/*.py",
-]
 
 [tool.django-stubs]
 django_settings_module = "tests.settings"
