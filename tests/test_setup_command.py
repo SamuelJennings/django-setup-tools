@@ -43,7 +43,20 @@ def mock_import_string(mocker):
 
 @pytest.fixture
 def mock_migration_recorder(mocker):
-    return mocker.patch("django_setup_tools.management.commands.setup.MigrationRecorder", autospec=True)
+    """Mock MigrationRecorder to avoid database dependencies."""
+    mock_class = mocker.patch("django_setup_tools.management.commands.setup.MigrationRecorder")
+    mock_instance = mock_class.return_value
+    mock_instance.has_table.return_value = False  # Default: DB not initialized
+    return mock_instance
+
+
+@pytest.fixture
+def mock_connection(mocker):
+    """Mock database connection to avoid database dependencies."""
+    mock_conn = mocker.patch("django_setup_tools.management.commands.setup.connection")
+    # Make the connection appear healthy
+    mock_conn.ensure_connection.return_value = None
+    return mock_conn
 
 
 @pytest.fixture
@@ -51,8 +64,9 @@ def custom_script(mocker):
     return mocker.patch("django_setup_tools.scripts.sync_site_id")
 
 
-def test_db_intialization_no_env_set(django_settings, mock_migration_recorder, mock_call_command, custom_script):
-    mock_migration_recorder.return_value.has_table.return_value = False
+def test_db_intialization_no_env_set(django_settings, mock_migration_recorder, mock_connection, mock_call_command, custom_script):
+    # Configure mock: database not yet initialized
+    mock_migration_recorder.has_table.return_value = False
 
     Command().handle()
 
@@ -70,8 +84,9 @@ def test_db_intialization_no_env_set(django_settings, mock_migration_recorder, m
     assert mock_call_command.call_count == 4
 
 
-def test_db_intialization_development_env(django_settings, mock_migration_recorder, mock_call_command, custom_script):
-    mock_migration_recorder.return_value.has_table.return_value = False  # Mock that the migration table DOES NOT exist
+def test_db_intialization_development_env(django_settings, mock_migration_recorder, mock_connection, mock_call_command, custom_script):
+    # Configure mock: database not yet initialized
+    mock_migration_recorder.has_table.return_value = False
 
     # Set the environment to development
     django_settings.DJANGO_SETUP_TOOLS_ENV = "development"  # Set the environment
@@ -90,9 +105,9 @@ def test_db_intialization_development_env(django_settings, mock_migration_record
     assert mock_call_command.call_count == 6
 
 
-def test_db_already_intialized_no_env_set(django_settings, mock_migration_recorder, mock_call_command, custom_script):
-    # Mock that the migration table DOES exist
-    mock_migration_recorder.return_value.has_table.return_value = True
+def test_db_already_intialized_no_env_set(django_settings, mock_migration_recorder, mock_connection, mock_call_command, custom_script):
+    # Configure mock: database already initialized
+    mock_migration_recorder.has_table.return_value = True
 
     Command().handle()
 
@@ -113,10 +128,10 @@ def test_db_already_intialized_no_env_set(django_settings, mock_migration_record
 
 
 def test_db_already_intialized_development_env(
-    django_settings, mock_migration_recorder, mock_call_command, custom_script
+    django_settings, mock_migration_recorder, mock_connection, mock_call_command, custom_script
 ):
-    # Mock that the migration table DOES exist
-    mock_migration_recorder.return_value.has_table.return_value = True
+    # Configure mock: database already initialized
+    mock_migration_recorder.has_table.return_value = True
 
     # Set the environment to development
     django_settings.DJANGO_SETUP_TOOLS_ENV = "development"  # Set the environment
