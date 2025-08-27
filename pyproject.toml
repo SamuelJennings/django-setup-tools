@@ -91,7 +91,6 @@ markers = [
 ]
 testpaths = ["tests"]
 filterwarnings = [
-    "ignore::django.test.utils.UserWarning",
     "ignore::DeprecationWarning",
     "ignore::PendingDeprecationWarning",
 ]
