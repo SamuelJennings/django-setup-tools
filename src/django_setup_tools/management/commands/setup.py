@@ -34,22 +34,32 @@ class Command(BaseCommand):
 
         if not setup_tools:
             self.stdout.write(
-                self.style.WARNING("No DJANGO_SETUP_TOOLS configuration found in settings.")
+                self.style.WARNING(
+                    "No DJANGO_SETUP_TOOLS configuration found in settings."
+                )
             )
             return
 
-        self.stdout.write(self.style.NOTICE("Running initialization scripts (django_setup_tools):"))
+        self.stdout.write(
+            self.style.NOTICE("Running initialization scripts (django_setup_tools):")
+        )
 
         if not self.is_initialized():
             commands = self.get_commands(setup_tools, env, "on_initial")
             if commands:
                 self.run_all(commands)
             else:
-                self.stdout.write(self.style.HTTP_INFO("No initialization scripts configured."))
+                self.stdout.write(
+                    self.style.HTTP_INFO("No initialization scripts configured.")
+                )
         else:
-            self.stdout.write(self.style.HTTP_INFO("Database already initialized... skipping."))
+            self.stdout.write(
+                self.style.HTTP_INFO("Database already initialized... skipping.")
+            )
 
-        self.stdout.write(self.style.MIGRATE_HEADING("Running setup scripts (django_setup_tools):"))
+        self.stdout.write(
+            self.style.MIGRATE_HEADING("Running setup scripts (django_setup_tools):")
+        )
         commands = self.get_commands(setup_tools, env, "always_run")
         if commands:
             self.run_all(commands)
@@ -62,7 +72,9 @@ class Command(BaseCommand):
             return MigrationRecorder(connection).has_table()
         except Exception as e:
             self.stdout.write(
-                self.style.WARNING(f"Could not check database initialization status: {e}")
+                self.style.WARNING(
+                    f"Could not check database initialization status: {e}"
+                )
             )
             return True  # Assume initialized to be safe
 
@@ -70,7 +82,7 @@ class Command(BaseCommand):
         self,
         defaults: dict[str, dict[str, list[CommandSpec]]],
         env: str,
-        command_type: str
+        command_type: str,
     ) -> list[CommandSpec]:
         """
         Get commands for the specified environment and command type.
@@ -107,7 +119,8 @@ class Command(BaseCommand):
                 else:
                     self.run_script(command)
             except Exception as e:
-                raise CommandError(f"Failed to execute command {command}: {e}") from e
+                msg = f"Failed to execute command {command}: {e}"
+                raise CommandError(msg) from e
 
     def run_script(self, command: str, *args: str) -> None:
         """
@@ -125,13 +138,16 @@ class Command(BaseCommand):
                 self.stdout.write(f"Executing function: {command}")
                 func(self, *args)
             except ImportError as e:
-                raise CommandError(f"Could not import function '{command}': {e}") from e
+                msg = f"Could not import function '{command}': {e}"
+                raise CommandError(msg) from e
             except Exception as e:
-                raise CommandError(f"Error executing function '{command}': {e}") from e
+                msg = f"Error executing function '{command}': {e}"
+                raise CommandError(msg) from e
         else:
             # This is a Django management command
             self.stdout.write(f"Executing management command: {command}")
             try:
                 call_command(command, *args)
             except Exception as e:
-                raise CommandError(f"Error executing management command '{command}': {e}") from e
+                msg = f"Error executing management command '{command}': {e}"
+                raise CommandError(msg) from e
