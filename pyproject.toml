@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-setup-tools"
-version = "0.2.3"
+version = "0.2.4"
 description = "Declaratively setup Django before deployment in any environment"
 authors = ["Sam <samuel.scott.jennings@gmail.com>"]
 license = "MIT"
