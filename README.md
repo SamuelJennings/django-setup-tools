@@ -2,7 +2,9 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 [![Django Version](https://img.shields.io/badge/django-5.0%2B-green.svg)](https://djangoproject.com)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![codecov](https://codecov.io/gh/SamuelJennings/django-setup-tools/branch/main/graph/badge.svg)](https://codecov.io/gh/SamuelJennings/django-setup-tools)
+![GitHub](https://img.shields.io/github/license/SamuelJennings/django-setup-tools)
+![GitHub last commit](https://img.shields.io/github/last-commit/SamuelJennings/django-setup-tools)
 
 Django Setup Tools is a Django package that enables declarative configuration of setup scripts for Django applications. It provides a simple way to run initialization scripts and ongoing maintenance tasks in different environments during deployment.
 
