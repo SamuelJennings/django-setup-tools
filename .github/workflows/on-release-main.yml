@@ -19,7 +19,7 @@ jobs:
         uses: ./.github/actions/setup-poetry-env
 
       - name: Run tests
-        run: poetry run pytest
+        run: poetry run python manage.py test
 
       - name: Build package
         run: poetry build
